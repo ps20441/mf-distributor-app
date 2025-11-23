@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MF Distributor Pro - Clickable Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1E40AF;
+            --success-green: #059669;
+            --error-red: #DC2626;
+            --warning-orange: #F59E0B;
+            --neutral-gray: #6B7280;
+            --light-gray: #F9FAFB;
+            --dark: #111827;
+            --white: #FFFFFF;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--light-gray);
+            color: var(--dark);
+            max-width: 428px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Screen Container */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 16px;
+            font-size: 20px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 428px;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: var(--neutral-gray);
+            font-size: 11px;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            padding: 4px 12px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-item .icon {
+            font-size: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: var(--neutral-gray);
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--success-green);
+            margin-top: 4px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #1E3A8A;
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-btn .icon {
+            font-size: 32px;
+        }
+
+        .action-btn .label {
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        /* Client List */
+        .client-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 16px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .client-item:hover {
+            transform: translateX(4px);
+        }
+
+        .client-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .client-pan {
+            font-size: 12px;
+            color: var(--neutral-gray);
+            margin-bottom: 8px;
+        }
+
+        .client-portfolio {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .portfolio-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .portfolio-return {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .positive {
+            color: var(--success-green);
+            background: #D1FAE5;
+        }
+
+        .negative {
+            color: var(--error-red);
+            background: #FEE2E2;
+        }
+
+        /* Input Fields */
+        .input-group {
+            margin: 16px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        /* Login Screen */
+        .login-container {
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .app-logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .app-subtitle {
+            font-size: 14px;
+            color: var(--neutral-gray);
+            margin-bottom: 40px;
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--light-gray);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-subtitle {
+            font-size: 12px;
+            color: var(--neutral-gray);
+            margin-bottom: 2px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--neutral-gray);
+        }
+
+        /* Portfolio Items */
+        .portfolio-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .fund-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .fund-folio {
+            font-size: 12px;
+            color: var(--neutral-gray);
+            margin-bottom: 12px;
+        }
+
+        .fund-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--neutral-gray);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Order Flow */
+        .order-type-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 12px 16px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-type-card:hover {
+            transform: translateX(4px);
+        }
+
+        .order-type-content {
+            flex: 1;
+        }
+
+        .order-type-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .order-type-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .order-type-subtitle {
+            font-size: 13px;
+            color: var(--neutral-gray);
+        }
+
+        .order-type-arrow {
+            font-size: 24px;
+            color: var(--neutral-gray);
+        }
+
+        /* Success Screen */
+        .success-container {
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--success-green);
+            margin-bottom: 24px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .success-message {
+            font-size: 14px;
+            color: var(--neutral-gray);
+            margin-bottom: 32px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: var(--light-gray);
+            border-radius: 2px;
+            margin: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-blue);
+            transition: width 0.3s;
+        }
+
+        /* Back Button */
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 12px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin: 16px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--neutral-gray);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--white);
+            border: 1px solid #E5E7EB;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-tab.active {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+
+        /* Chart Placeholder */
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        /* Commission Stats */
+        .commission-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px;
+        }
+
+        .commission-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .commission-label {
+            font-size: 12px;
+            color: var(--neutral-gray);
+            margin-bottom: 8px;
+        }
+
+        .commission-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--warning-orange);
+        }
+
+        /* Settings List */
+        .settings-list {
+            background: var(--white);
+            margin: 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            font-size: 20px;
+        }
+
+        .settings-label {
+            font-size: 15px;
+        }
+
+        .settings-arrow {
+            font-size: 18px;
+            color: var(--neutral-gray);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #1E3A8A 100%);
+            color: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-arn {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .profile-mobile {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Notification Badge */
+        .badge {
+            background: var(--error-red);
+            color: var(--white);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+        }
+
+        .icon-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login" class="screen active">
+        <div class="login-container">
+            <div class="app-logo">💼</div>
+            <h1 class="app-title">MF Distributor Pro</h1>
+            <p class="app-subtitle">Manage your clients' investments with ease</p>
+
+            <div class="input-group">
+                <label class="input-label">📱 Mobile Number</label>
+                <input type="tel" class="input-field" placeholder="+91 98765 43210" value="9876543210">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">🔒 Password</label>
+                <input type="password" class="input-field" placeholder="Enter password" value="password">
+            </div>
+
+            <div style="margin: 32px 16px;">
+                <button class="btn" onclick="navigateTo('home')">Login →</button>
+            </div>
+
+            <p style="text-align: center; color: var(--neutral-gray); font-size: 14px; margin-top: 24px;">
+                Don't have an account? <span style="color: var(--primary-blue); cursor: pointer;">Sign Up</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="home" class="screen">
+        <div class="header">
+            <div>
+                <button class="icon-btn">☰</button>
+            </div>
+            <h1>Home</h1>
+            <div class="header-icons">
+                <div class="icon-wrapper">
+                    <button class="icon-btn">🔔</button>
+                    <span class="badge">3</span>
+                </div>
+                <button class="icon-btn">🔍</button>
+            </div>
+        </div>
+
+        <div style="padding: 16px;">
+            <h2 style="font-size: 24px; margin-bottom: 4px;">Good Morning, Rajesh 👋</h2>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, var(--primary-blue) 0%, #1E3A8A 100%); color: var(--white);">
+            <div class="card-title" style="color: rgba(255,255,255,0.9);">💰 Total AUM</div>
+            <div class="card-value">₹2,45,67,890</div>
+            <div class="card-subtitle" style="color: rgba(255,255,255,0.9);">▲ +12.5% this month</div>
+        </div>
+
+        <div class="section-header">
+            <span>Quick Actions</span>
+        </div>
+
+        <div class="quick-actions">
+            <button class="action-btn" onclick="navigateTo('clients')">
+                <div class="icon">👤</div>
+                <div class="label">Add Client</div>
+            </button>
+            <button class="action-btn" onclick="navigateTo('order-type')">
+                <div class="icon">📈</div>
+                <div class="label">Place Order</div>
+            </button>
+            <button class="action-btn" onclick="navigateTo('order-type')">
+                <div class="icon">💸</div>
+                <div class="label">Start SIP</div>
+            </button>
+            <button class="action-btn" onclick="navigateTo('commission')">
+                <div class="icon">📄</div>
+                <div class="label">Reports</div>
+            </button>
+        </div>
+
+        <div class="section-header">
+            <span>Recent Activity</span>
+            <span class="section-link">More ›</span>
+        </div>
+
+        <div class="card" style="padding: 0;">
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #D1FAE5; color: var(--success-green);">✓</div>
+                <div class="activity-content">
+                    <div class="activity-title">Order Executed</div>
+                    <div class="activity-subtitle">Priya Sharma - SIP ₹5,000</div>
+                    <div class="activity-subtitle">HDFC Equity Fund</div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #FEF3C7; color: var(--warning-orange);">⚠</div>
+                <div class="activity-content">
+                    <div class="activity-title">Pending KYC</div>
+                    <div class="activity-subtitle">Amit Verma</div>
+                    <div class="activity-time">5 hours ago</div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #D1FAE5; color: var(--success-green);">💰</div>
+                <div class="activity-content">
+                    <div class="activity-title">Commission Received</div>
+                    <div class="activity-subtitle">₹2,450 credited</div>
+                    <div class="activity-time">Yesterday</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>Portfolio Performance</span>
+            <span class="section-link" onclick="navigateTo('portfolio')">More ›</span>
+        </div>
+
+        <div style="margin: 0 16px;">
+            <div class="chart-placeholder">
+                📊 Portfolio Chart<br>(Last 30 days)
+            </div>
+        </div>
+    </div>
+
+    <!-- Clients Screen -->
+    <div id="clients" class="screen">
+        <div class="header">
+            <h1>Clients</h1>
+            <div class="header-icons">
+                <button class="icon-btn">🔍</button>
+                <button class="icon-btn">➕</button>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search clients...">
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active">All</div>
+            <div class="filter-tab">Active</div>
+            <div class="filter-tab">Dormant</div>
+            <div class="filter-tab">KYC Pending</div>
+        </div>
+
+        <div style="padding: 0 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 14px; color: var(--neutral-gray);">125 Clients</span>
+            <span style="font-size: 14px; color: var(--primary-blue); cursor: pointer;">⚙️ Sort</span>
+        </div>
+
+        <div class="client-item" onclick="navigateTo('client-detail')">
+            <div class="client-name">👤 Amit Verma</div>
+            <div class="client-pan">ABCDE****F</div>
+            <div class="client-portfolio">
+                <span class="portfolio-value">₹5,67,890</span>
+                <span class="portfolio-return positive">+8.5% 🟢</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--warning-orange);">⚠️ KYC Pending</div>
+        </div>
+
+        <div class="client-item" onclick="navigateTo('client-detail')">
+            <div class="client-name">👤 Anjali Sharma</div>
+            <div class="client-pan">ZYXWV****A</div>
+            <div class="client-portfolio">
+                <span class="portfolio-value">₹12,45,000</span>
+                <span class="portfolio-return positive">+15.2% 🟢</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--success-green);">✓ Active</div>
+        </div>
+
+        <div class="client-item" onclick="navigateTo('client-detail')">
+            <div class="client-name">👤 Priya Patel</div>
+            <div class="client-pan">GHIJK****L</div>
+            <div class="client-portfolio">
+                <span class="portfolio-value">₹8,90,500</span>
+                <span class="portfolio-return negative">-2.3% 🔴</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--success-green);">✓ Active</div>
+        </div>
+
+        <div class="client-item" onclick="navigateTo('client-detail')">
+            <div class="client-name">👤 Rajesh Kumar</div>
+            <div class="client-pan">PQRST****Z</div>
+            <div class="client-portfolio">
+                <span class="portfolio-value">₹15,67,890</span>
+                <span class="portfolio-return positive">+22.8% 🟢</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--success-green);">✓ Active</div>
+        </div>
+    </div>
+
+    <!-- Client Detail Screen -->
+    <div id="client-detail" class="screen">
+        <div class="header">
+            <div>
+                <button class="back-btn" onclick="navigateTo('clients')">←</button>
+                <span style="font-size: 18px; font-weight: 600;">Client Details</span>
+            </div>
+            <button class="icon-btn">⋮</button>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 12px;">👤</div>
+            <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Priya Sharma</div>
+            <div style="font-size: 14px; color: var(--neutral-gray); margin-bottom: 4px;">ABCDE****F</div>
+            <div style="font-size: 14px; color: var(--neutral-gray); margin-bottom: 4px;">📞 98765-43210</div>
+            <div style="font-size: 14px; color: var(--neutral-gray);">✉️ priya@email.com</div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin: 0 16px 16px;">
+            <button class="btn btn-secondary" style="flex: 1;">📞 Call</button>
+            <button class="btn btn-secondary" style="flex: 1;">✉️ Email</button>
+            <button class="btn btn-secondary" style="flex: 1;">📄 Statement</button>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Portfolio Overview</div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--neutral-gray); margin-bottom: 4px;">Current Value</div>
+                <div style="font-size: 28px; font-weight: 700;">₹12,45,000</div>
+            </div>
+            <div style="display: flex; gap: 32px;">
+                <div>
+                    <div style="font-size: 12px; color: var(--neutral-gray); margin-bottom: 4px;">Invested</div>
+                    <div style="font-size: 18px; font-weight: 600;">₹10,00,000</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: var(--neutral-gray); margin-bottom: 4px;">Gains</div>
+                    <div style="font-size: 18px; font-weight: 600; color: var(--success-green);">₹2,45,000 🟢</div>
+                    <div style="font-size: 14px; color: var(--success-green);">+24.5%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>Holdings (4)</span>
+            <span class="section-link" onclick="navigateTo('portfolio')">View All ›</span>
+        </div>
+
+        <div class="portfolio-item">
+            <div class="fund-name">HDFC Equity Fund - Growth</div>
+            <div class="fund-folio">Folio: 12345678</div>
+            <div class="fund-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value">₹4,50,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Gain</div>
+                    <div class="stat-value" style="color: var(--success-green);">+₹90,000 (25%)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="portfolio-item">
+            <div class="fund-name">ICICI Prudential Liquid Fund</div>
+            <div class="fund-folio">Folio: 87654321</div>
+            <div class="fund-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value">₹3,20,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Gain</div>
+                    <div class="stat-value" style="color: var(--success-green);">+₹15,000 (4.9%)</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 24px 16px;">
+            <button class="btn" onclick="navigateTo('order-type')">Place New Order →</button>
+        </div>
+    </div>
+
+    <!-- Portfolio Screen -->
+    <div id="portfolio" class="screen">
+        <div class="header">
+            <h1>Portfolio</h1>
+            <div class="header-icons">
+                <button class="icon-btn">🔍</button>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: var(--white);">
+            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Total Portfolio Value</div>
+            <div style="font-size: 32px; font-weight: 700; margin-bottom: 16px;">₹2,45,67,890</div>
+            <div style="display: flex; gap: 24px; font-size: 14px;">
+                <div>
+                    <div style="opacity: 0.9;">Invested</div>
+                    <div style="font-weight: 600;">₹2,00,00,000</div>
+                </div>
+                <div>
+                    <div style="opacity: 0.9;">Gains</div>
+                    <div style="font-weight: 600;">₹45,67,890 (+22.8%)</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 14px;">
+                XIRR: <span style="font-weight: 600;">18.5% p.a.</span>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>Asset Allocation</span>
+        </div>
+
+        <div style="margin: 0 16px 16px;">
+            <div class="chart-placeholder">
+                🥧 Pie Chart<br>
+                Equity 65% • Debt 25% • Hybrid 10%
+            </div>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active">All</div>
+            <div class="filter-tab">Equity</div>
+            <div class="filter-tab">Debt</div>
+            <div class="filter-tab">Hybrid</div>
+        </div>
+
+        <div class="section-header">
+            <span>Holdings (25)</span>
+        </div>
+
+        <div class="portfolio-item">
+            <div class="fund-name">HDFC Equity Fund - Growth</div>
+            <div class="fund-folio">Folio: 12345678</div>
+            <div class="fund-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value">₹45,67,890</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Invested</div>
+                    <div class="stat-value">₹35,00,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Gain</div>
+                    <div class="stat-value" style="color: var(--success-green);">₹10,67,890 (+30.5%)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Units • NAV</div>
+                    <div class="stat-value" style="font-size: 12px;">456.78 @ ₹1,000.50</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11px; color: var(--neutral-gray);">
+                Last updated: 2 hours ago
+            </div>
+        </div>
+
+        <div class="portfolio-item">
+            <div class="fund-name">ICICI Prudential Liquid Fund</div>
+            <div class="fund-folio">Folio: 87654321</div>
+            <div class="fund-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Current Value</div>
+                    <div class="stat-value">₹25,34,560</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Invested</div>
+                    <div class="stat-value">₹25,00,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Gain</div>
+                    <div class="stat-value" style="color: var(--success-green);">₹34,560 (+1.4%)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Units • NAV</div>
+                    <div class="stat-value" style="font-size: 12px;">8234.56 @ ₹307.80</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11px; color: var(--neutral-gray);">
+                Last updated: 2 hours ago
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Type Selection Screen -->
+    <div id="order-type" class="screen">
+        <div class="header">
+            <div>
+                <button class="back-btn" onclick="navigateTo('home')">←</button>
+                <span style="font-size: 18px; font-weight: 600;">Place Order</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 14px; color: var(--neutral-gray); margin-bottom: 8px;">Client</div>
+            <div style="font-size: 16px; font-weight: 600;">Priya Sharma</div>
+            <button class="btn btn-secondary" style="margin-top: 12px; font-size: 14px;">[Change Client]</button>
+        </div>
+
+        <div class="section-header">
+            <span>Select Order Type</span>
+        </div>
+
+        <div class="order-type-card" onclick="navigateTo('order-sip')">
+            <div class="order-type-content">
+                <div class="order-type-icon">💰</div>
+                <div class="order-type-title">Lumpsum Purchase</div>
+                <div class="order-type-subtitle">One-time investment</div>
+            </div>
+            <div class="order-type-arrow">›</div>
+        </div>
+
+        <div class="order-type-card" onclick="navigateTo('order-sip')">
+            <div class="order-type-content">
+                <div class="order-type-icon">📅</div>
+                <div class="order-type-title">Start SIP</div>
+                <div class="order-type-subtitle">Systematic Investment Plan</div>
+            </div>
+            <div class="order-type-arrow">›</div>
+        </div>
+
+        <div class="order-type-card" onclick="navigateTo('order-sip')">
+            <div class="order-type-content">
+                <div class="order-type-icon">💸</div>
+                <div class="order-type-title">Redemption</div>
+                <div class="order-type-subtitle">Sell units / Withdraw</div>
+            </div>
+            <div class="order-type-arrow">›</div>
+        </div>
+
+        <div class="order-type-card" onclick="navigateTo('order-sip')">
+            <div class="order-type-content">
+                <div class="order-type-icon">🔄</div>
+                <div class="order-type-title">Switch</div>
+                <div class="order-type-subtitle">Switch between funds</div>
+            </div>
+            <div class="order-type-arrow">›</div>
+        </div>
+    </div>
+
+    <!-- SIP Order Screen -->
+    <div id="order-sip" class="screen">
+        <div class="header">
+            <div>
+                <button class="back-btn" onclick="navigateTo('order-type')">←</button>
+                <span style="font-size: 18px; font-weight: 600;">Start SIP</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; color: var(--neutral-gray);">
+            Step 2 of 3: SIP Details
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 66%;"></div>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 14px; color: var(--neutral-gray); margin-bottom: 8px;">Selected Fund</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">HDFC Equity Fund - Growth</div>
+            <div style="font-size: 14px; color: var(--neutral-gray);">NAV: ₹1,000.50</div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">SIP Amount *</label>
+            <input type="number" class="input-field" placeholder="Enter amount" value="5000">
+            <div style="font-size: 12px; color: var(--neutral-gray); margin-top: 4px;">
+                Min: ₹500 • Recommended: ₹5,000
+            </div>
+        </div>
+
+        <div style="padding: 0 16px;">
+            <div style="font-size: 14px; margin-bottom: 8px;">Quick Select</div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" style="flex: 1; padding: 10px;">₹1,000</button>
+                <button class="btn" style="flex: 1; padding: 10px;">₹5,000</button>
+                <button class="btn btn-secondary" style="flex: 1; padding: 10px;">₹10,000</button>
+                <button class="btn btn-secondary" style="flex: 1; padding: 10px;">₹25K</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">SIP Date</label>
+            <select class="input-field">
+                <option>5th of month (Popular)</option>
+                <option>1st of month</option>
+                <option>10th of month</option>
+                <option>15th of month</option>
+                <option>25th of month</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Number of Installments</label>
+            <input type="number" class="input-field" placeholder="12" value="12">
+            <div style="font-size: 12px; color: var(--neutral-gray); margin-top: 4px;">
+                Or select: <span style="color: var(--primary-blue); cursor: pointer;">Until Cancelled</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Start Date</label>
+            <input type="date" class="input-field" value="2024-12-01">
+        </div>
+
+        <div class="card" style="background: var(--light-gray);">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Estimated Investment</div>
+            <div style="font-size: 20px; font-weight: 700;">₹5,000 × 12 = ₹60,000</div>
+        </div>
+
+        <div style="margin: 24px 16px;">
+            <button class="btn" onclick="navigateTo('order-confirm')">Continue →</button>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Screen -->
+    <div id="order-confirm" class="screen">
+        <div class="header">
+            <div>
+                <button class="back-btn" onclick="navigateTo('order-sip')">←</button>
+                <span style="font-size: 18px; font-weight: 600;">Review SIP Order</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; color: var(--neutral-gray);">
+            Step 3 of 3: Confirm
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%;"></div>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Order Summary</div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">Client</div>
+                <div style="font-size: 15px; font-weight: 600;">Priya Sharma (ABCDE****F)</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">Fund</div>
+                <div style="font-size: 15px; font-weight: 600;">HDFC Equity Fund - Growth</div>
+                <div style="font-size: 13px; color: var(--neutral-gray);">NAV: ₹1,000.50</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">SIP Amount</div>
+                <div style="font-size: 15px; font-weight: 600;">₹5,000 per month</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">SIP Date</div>
+                <div style="font-size: 15px; font-weight: 600;">5th of every month</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">Duration</div>
+                <div style="font-size: 15px; font-weight: 600;">12 months</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">First Installment</div>
+                <div style="font-size: 15px; font-weight: 600;">05 Dec 2024</div>
+            </div>
+
+            <div style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid var(--light-gray);">
+                <div style="font-size: 12px; color: var(--neutral-gray);">Total Investment</div>
+                <div style="font-size: 20px; font-weight: 700; color: var(--primary-blue);">₹60,000</div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 12px; color: var(--neutral-gray);">Your Commission (Est.)</div>
+                <div style="font-size: 18px; font-weight: 700; color: var(--warning-orange);">₹600 (1%)</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Payment Method</div>
+            <div style="margin-bottom: 8px;">
+                <label style="display: flex; align-items: center; gap: 8px; padding: 12px; background: var(--light-gray); border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="payment" checked>
+                    <span>Mandate (Auto-debit)</span>
+                </label>
+            </div>
+            <div>
+                <label style="display: flex; align-items: center; gap: 8px; padding: 12px; background: var(--light-gray); border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="payment">
+                    <span>Pay Now (First installment)</span>
+                </label>
+            </div>
+        </div>
+
+        <div style="padding: 0 16px;">
+            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; cursor: pointer;">
+                <input type="checkbox" checked>
+                <span style="font-size: 14px;">I confirm the details above</span>
+            </label>
+        </div>
+
+        <div style="margin: 0 16px 24px;">
+            <button class="btn" onclick="navigateTo('order-success')">Submit Order →</button>
+        </div>
+    </div>
+
+    <!-- Order Success Screen -->
+    <div id="order-success" class="screen">
+        <div class="success-container">
+            <div class="success-icon">✅</div>
+            <h2 class="success-title">Order Placed Successfully!</h2>
+            <p class="success-message">
+                Your SIP order has been submitted to BSE Star MF
+            </p>
+            <div style="background: var(--light-gray); padding: 16px; border-radius: 12px; margin-bottom: 32px; text-align: left;">
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Order ID: BSE2024112212345</div>
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">What's Next?</div>
+                <div style="font-size: 13px; margin-bottom: 8px;">1. Order will be processed within 24 hours</div>
+                <div style="font-size: 13px; margin-bottom: 8px;">2. You'll receive confirmation via SMS & Email</div>
+                <div style="font-size: 13px;">3. First debit on 05 Dec 2024</div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                <button class="btn btn-secondary" style="flex: 1;">View Order Status</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="navigateTo('order-type')">Place Another</button>
+            </div>
+            <button class="btn" onclick="navigateTo('home')">Go to Home</button>
+        </div>
+    </div>
+
+    <!-- Commission Screen -->
+    <div id="commission" class="screen">
+        <div class="header">
+            <h1>Commission</h1>
+            <div class="header-icons">
+                <button class="icon-btn">📅</button>
+                <button class="icon-btn">🔍</button>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, var(--warning-orange) 0%, #D97706 100%); color: var(--white);">
+            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">This Month (Nov 2024)</div>
+            <div style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">₹45,670</div>
+            <div style="font-size: 14px; opacity: 0.9;">▲ +12% from last month</div>
+        </div>
+
+        <div class="commission-grid">
+            <div class="commission-card">
+                <div class="commission-label">Year-to-Date (2024)</div>
+                <div class="commission-value">₹4,56,789</div>
+            </div>
+            <div class="commission-card">
+                <div class="commission-label">Expected This Month</div>
+                <div class="commission-value" style="font-size: 20px;">₹12,450</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>Commission Breakdown</span>
+        </div>
+
+        <div style="margin: 0 16px 16px;">
+            <div class="chart-placeholder">
+                📊 Bar Chart<br>
+                Upfront vs Trail Commission
+            </div>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active">Received</div>
+            <div class="filter-tab">Expected</div>
+            <div class="filter-tab">All</div>
+        </div>
+
+        <div class="section-header">
+            <span>Recent Commissions</span>
+        </div>
+
+        <div class="card" style="padding: 0;">
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #D1FAE5; color: var(--success-green);">✅</div>
+                <div class="activity-content">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="activity-title">Received</div>
+                            <div class="activity-subtitle">Priya Sharma - HDFC Equity</div>
+                            <div class="activity-subtitle">Trail Commission</div>
+                            <div class="activity-time">15 Nov 2024</div>
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--success-green);">₹2,450</div>
+                    </div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #FEF3C7; color: var(--warning-orange);">⏳</div>
+                <div class="activity-content">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="activity-title">Expected</div>
+                            <div class="activity-subtitle">Amit Verma - SIP Purchase</div>
+                            <div class="activity-subtitle">Upfront Commission</div>
+                            <div class="activity-time">Expected: 30 Nov 2024</div>
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--warning-orange);">₹1,200</div>
+                    </div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #D1FAE5; color: var(--success-green);">✅</div>
+                <div class="activity-content">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="activity-title">Received</div>
+                            <div class="activity-subtitle">Rajesh Kumar - ICICI Liquid</div>
+                            <div class="activity-subtitle">Upfront Commission</div>
+                            <div class="activity-time">10 Nov 2024</div>
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--success-green);">₹5,600</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 24px 16px;">
+            <button class="btn">Download Report</button>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings" class="screen">
+        <div class="header">
+            <h1>Settings</h1>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name">Rajesh Kumar</div>
+            <div class="profile-arn">ARN-12345</div>
+            <div class="profile-mobile">+91 98765-43210</div>
+            <button class="btn btn-secondary" style="margin-top: 16px; color: var(--white); background: rgba(255,255,255,0.2);">
+                Edit Profile
+            </button>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; font-weight: 600; color: var(--neutral-gray);">
+            ACCOUNT
+        </div>
+
+        <div class="settings-list">
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">👤</span>
+                    <span class="settings-label">Profile Settings</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🔒</span>
+                    <span class="settings-label">Change Password</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🔔</span>
+                    <span class="settings-label">Notifications</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; font-weight: 600; color: var(--neutral-gray);">
+            DATA & SYNC
+        </div>
+
+        <div class="settings-list">
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🔄</span>
+                    <div>
+                        <div class="settings-label">Sync Now</div>
+                        <div style="font-size: 12px; color: var(--neutral-gray);">Last synced: 2 hours ago</div>
+                    </div>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">📊</span>
+                    <span class="settings-label">Data Sync Settings</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; font-weight: 600; color: var(--neutral-gray);">
+            PREFERENCES
+        </div>
+
+        <div class="settings-list">
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🌙</span>
+                    <span class="settings-label">Dark Mode</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span style="color: var(--neutral-gray);">OFF</span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">👆</span>
+                    <span class="settings-label">Biometric Login</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span style="color: var(--success-green);">ON</span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🌐</span>
+                    <span class="settings-label">Language</span>
+                </div>
+                <span style="color: var(--neutral-gray);">English ›</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; font-size: 14px; font-weight: 600; color: var(--neutral-gray);">
+            ABOUT
+        </div>
+
+        <div class="settings-list">
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">ℹ️</span>
+                    <span class="settings-label">Help & Support</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">📄</span>
+                    <span class="settings-label">Terms & Conditions</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">🔒</span>
+                    <span class="settings-label">Privacy Policy</span>
+                </div>
+                <span class="settings-arrow">›</span>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-left">
+                    <span class="settings-icon">📱</span>
+                    <span class="settings-label">App Version</span>
+                </div>
+                <span style="color: var(--neutral-gray);">1.0.0</span>
+            </div>
+        </div>
+
+        <div style="margin: 24px 16px;">
+            <button class="btn" style="background: var(--error-red);" onclick="navigateTo('login')">Logout</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation (shown on main screens) -->
+    <div class="bottom-nav" id="bottomNav">
+        <button class="nav-item" onclick="setActiveTab('home')" data-screen="home">
+            <div class="icon">🏠</div>
+            <div>Home</div>
+        </button>
+        <button class="nav-item" onclick="setActiveTab('clients')" data-screen="clients">
+            <div class="icon">👥</div>
+            <div>Clients</div>
+        </button>
+        <button class="nav-item" onclick="setActiveTab('portfolio')" data-screen="portfolio">
+            <div class="icon">📊</div>
+            <div>Portfolio</div>
+        </button>
+        <button class="nav-item" onclick="setActiveTab('commission')" data-screen="commission">
+            <div class="icon">💰</div>
+            <div>Commission</div>
+        </button>
+        <button class="nav-item" onclick="setActiveTab('settings')" data-screen="settings">
+            <div class="icon">⚙️</div>
+            <div>Settings</div>
+        </button>
+    </div>
+
+    <script>
+        // Navigation function
+        function navigateTo(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+
+            // Show/hide bottom navigation based on screen
+            const screensWithNav = ['home', 'clients', 'portfolio', 'commission', 'settings'];
+            const bottomNav = document.getElementById('bottomNav');
+
+            if (screensWithNav.includes(screenId)) {
+                bottomNav.style.display = 'flex';
+                setActiveTab(screenId);
+            } else {
+                bottomNav.style.display = 'none';
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Set active tab in bottom navigation
+        function setActiveTab(screenId) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            const activeItem = document.querySelector(`[data-screen="${screenId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            navigateTo(screenId);
+        }
+
+        // Initialize - start with login screen
+        document.addEventListener('DOMContentLoaded', function() {
+            navigateTo('login');
+        });
+    </script>
+</body>
+</html>
