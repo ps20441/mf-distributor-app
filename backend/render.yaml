@@ -1,0 +1,29 @@
+services:
+  # Backend API Service
+  - type: web
+    name: mf-distributor-api
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npm run build && npx prisma generate && npx prisma migrate deploy
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mf-distributor-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: mf-distributor-db
+    databaseName: mf_distributor
+    user: mf_user
+    plan: free
+    region: singapore
