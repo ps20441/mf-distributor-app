@@ -1,0 +1,126 @@
+// Prisma schema for MF Distributor App
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Distributor Model
+model Distributor {
+  id        String   @id @default(uuid())
+  name      String
+  arn       String   @unique
+  euin      String?
+  mobile    String   @unique
+  email     String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients     Client[]
+  commissions Commission[]
+
+  @@map("distributors")
+}
+
+// Client Model
+model Client {
+  id            String   @id @default(uuid())
+  pan           String   @unique
+  name          String
+  mobile        String
+  email         String?
+  dateOfBirth   DateTime?
+  kycStatus     String   @default("PENDING")
+  importedFrom  String?
+  distributorId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  distributor  Distributor    @relation(fields: [distributorId], references: [id], onDelete: Cascade)
+  portfolios   Portfolio[]
+  transactions Transaction[]
+
+  @@map("clients")
+}
+
+// Mutual Fund Scheme Model
+model Scheme {
+  id         String   @id @default(uuid())
+  amcCode    String
+  schemeCode String   @unique
+  schemeName String
+  category   String
+  nav        Float
+  navDate    DateTime
+  aum        Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  portfolios   Portfolio[]
+  transactions Transaction[]
+
+  @@map("schemes")
+}
+
+// Portfolio Model
+model Portfolio {
+  id            String   @id @default(uuid())
+  clientId      String
+  schemeId      String
+  folio         String
+  units         Float
+  avgNav        Float
+  investedValue Float
+  currentValue  Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  scheme Scheme @relation(fields: [schemeId], references: [id])
+
+  @@unique([clientId, schemeId, folio])
+  @@map("portfolios")
+}
+
+// Transaction Model
+model Transaction {
+  id        String   @id @default(uuid())
+  clientId  String
+  schemeId  String
+  type      String
+  units     Float
+  nav       Float
+  amount    Float
+  date      DateTime
+  source    String
+  status    String   @default("COMPLETED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  scheme Scheme @relation(fields: [schemeId], references: [id])
+
+  @@map("transactions")
+}
+
+// Commission Model
+model Commission {
+  id            String   @id @default(uuid())
+  distributorId String
+  transactionId String?
+  type          String
+  rate          Float
+  amount        Float
+  status        String   @default("EXPECTED")
+  payoutDate    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  distributor Distributor @relation(fields: [distributorId], references: [id], onDelete: Cascade)
+
+  @@map("commissions")
+}
