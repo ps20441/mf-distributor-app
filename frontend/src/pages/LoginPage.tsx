@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/auth.service';
 
 export default function LoginPage() {
   const [mobile, setMobile] = useState('9876543210');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
-    // Simulate API call
-    setTimeout(() => {
-      // Store token (mock)
-      localStorage.setItem('token', 'mock-jwt-token');
+    try {
+      const response = await authService.login({ mobile, password });
+
+      // Store token and user data
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.distributor));
+
+      // Navigate to dashboard
       navigate('/dashboard');
-    }, 1000);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || 'Login failed. Please try again.';
+      setError(errorMessage);
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,6 +47,13 @@ export default function LoginPage() {
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleLogin} className="space-y-6">
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
             {/* Mobile Number */}
             <div>
               <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-2">
@@ -98,6 +118,12 @@ export default function LoginPage() {
               Sign Up
             </a>
           </p>
+
+          {/* Test Credentials Hint */}
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-gray-600">
+            <p className="font-semibold mb-1">💡 First-time user? Register first:</p>
+            <p>Use any mobile number (10 digits) and create a password</p>
+          </div>
         </div>
 
         {/* Biometric */}
