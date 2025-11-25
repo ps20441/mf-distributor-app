@@ -5,6 +5,7 @@ services:
     env: node
     region: singapore
     plan: free
+    rootDirectory: backend
     buildCommand: npm install && npm run build && npx prisma generate && npx prisma migrate deploy
     startCommand: npm start
     envVars:
