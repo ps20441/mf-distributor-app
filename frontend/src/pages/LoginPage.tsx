@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 
 export default function LoginPage() {
@@ -114,9 +114,9 @@ export default function LoginPage() {
           {/* Sign Up */}
           <p className="mt-6 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="#" className="text-primary font-semibold hover:text-blue-800">
+            <Link to="/register" className="text-primary font-semibold hover:text-blue-800">
               Sign Up
-            </a>
+            </Link>
           </p>
 
           {/* Test Credentials Hint */}
